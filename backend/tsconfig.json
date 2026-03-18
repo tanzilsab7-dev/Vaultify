@@ -10,14 +10,8 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "types": ["node", "express", "jsonwebtoken", "cors", "bcrypt", "pg"]
+    "types": ["node", "express"]
   },
   "include": ["src/**/*"],
-  "exclude": [
-    "node_modules",
-    "../src",
-    "../vaultify-client",
-    "../**/*.tsx",
-    "../**/*.ts"
-  ]
+  "exclude": ["node_modules"]
 }
