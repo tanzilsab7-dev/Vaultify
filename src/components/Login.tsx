@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useVault } from '../context/VaultContext';
-import { CryptoService } from '../crypto/keyDerivation';
+
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+console.log('API_URL used:', API_URL);
+
+interface SaltResponse {
+    salt: string;
+}
 
 interface LoginProps {
     onSuccess: () => void;
@@ -24,32 +30,26 @@ export const Login: React.FC<LoginProps> = ({ onSuccess }) => {
         setIsLoading(true);
 
         try {
-            // Validate passwords match for register
             if (!isLoginMode && password !== confirmPassword) {
                 setLocalError('Passwords do not match');
                 setIsLoading(false);
                 return;
             }
 
-            // First authenticate with backend
             if (isLoginMode) {
                 await login(username, password);
             } else {
                 await register(username, password);
             }
 
-            // Get salt from backend
-            const saltResponse = await fetch(`http://localhost:5000/api/auth/salt/${username}`);
-            const saltData = await saltResponse.json();
+            const saltResponse = await fetch(`${API_URL}/auth/salt/${username}`);
+            const saltData = await saltResponse.json() as SaltResponse;
             
             if (!saltResponse.ok) {
-                throw new Error(saltData.error || 'Failed to get salt');
+                throw new Error(saltData.salt || 'Failed to get salt');
             }
 
-            // Convert salt from base64 to Uint8Array
             const salt = Uint8Array.from(atob(saltData.salt), c => c.charCodeAt(0));
-
-            // Unlock vault with master password
             await unlockVault(password);
             
             onSuccess();

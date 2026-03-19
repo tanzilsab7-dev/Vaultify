@@ -47,10 +47,7 @@ export const VaultProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             if (savedVault) {
                 setVault(JSON.parse(savedVault));
             } else {
-                setVault({
-                    version: 1,
-                    entries: []
-                });
+                setVault({ version: 1, entries: [] });
             }
             
             setIsLocked(false);
@@ -83,11 +80,7 @@ export const VaultProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             created: Date.now()
         };
         
-        const updatedVault = {
-            ...vault,
-            entries: [...vault.entries, newEntry]
-        };
-        
+        const updatedVault = { ...vault, entries: [...vault.entries, newEntry] };
         saveVault(updatedVault);
     };
 
@@ -95,41 +88,21 @@ export const VaultProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         if (!vault) return;
         
         const updatedEntries = vault.entries.map(entry => 
-            entry.id === id 
-                ? { ...entry, site, username, password, notes: notes || '' }
-                : entry
+            entry.id === id ? { ...entry, site, username, password, notes: notes || '' } : entry
         );
         
-        const updatedVault = {
-            ...vault,
-            entries: updatedEntries
-        };
-        
-        saveVault(updatedVault);
+        saveVault({ ...vault, entries: updatedEntries });
     };
 
     const deleteEntry = async (id: string) => {
         if (!vault) return;
         
-        const updatedVault = {
-            ...vault,
-            entries: vault.entries.filter(entry => entry.id !== id)
-        };
-        
-        saveVault(updatedVault);
+        saveVault({ ...vault, entries: vault.entries.filter(entry => entry.id !== id) });
     };
 
     return (
         <VaultContext.Provider value={{
-            vault,
-            isLoading,
-            error,
-            addEntry,
-            updateEntry,
-            deleteEntry,
-            lockVault,
-            unlockVault,
-            isLocked
+            vault, isLoading, error, addEntry, updateEntry, deleteEntry, lockVault, unlockVault, isLocked
         }}>
             {children}
         </VaultContext.Provider>
